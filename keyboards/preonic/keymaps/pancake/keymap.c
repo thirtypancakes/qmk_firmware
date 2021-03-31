@@ -1,6 +1,7 @@
 #include "preonic.h"
 #include "muse.h" // nicer beeps
 
+// easier names for long keycodes
 enum my_keys {
     WINLEFT = LCTL(LGUI(KC_LEFT)),
     WINRIGHT = RCTL(RGUI(KC_RGHT)),
@@ -12,6 +13,7 @@ enum my_keys {
     MVLEFT = LGUI(LALT(LSFT(KC_LEFT)))
 };
 
+// layers
 enum preonic_layers {
     _QWERTY,    // default layer
     _LOWER,     // symbols
@@ -20,6 +22,7 @@ enum preonic_layers {
     _FUNCTIONS // windows window management, mouse keys
 };
 
+// names for switching to layers
 enum preonic_keycodes {
     QWERTY = SAFE_RANGE,
     LOWER,
@@ -28,10 +31,14 @@ enum preonic_keycodes {
     NUMS
 };
 
+// tapdance key names
 enum my_td_keys {
-    LYR
+    LLYR,
+    RLYR // raise layer tap dance, unused now but may come back to this
+
 };
 
+// dedicated names used in tapdances
 enum tap_keycodes {
     SINGLE_TAP,
     SINGLE_HOLD,
@@ -39,40 +46,39 @@ enum tap_keycodes {
     DOUBLE_HOLD
 };
 
+// define tap_state
 typedef struct tap_state {
     bool is_press_action;
     uint8_t state;
 } tap;
 
-
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { \
     [_QWERTY] = LAYOUT_ortho_5x12(\
-            KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,     KC_9,    KC_0,    KC_NO,    \
-            KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,     KC_O,    KC_P,    KC_DEL,   \
-            CTRLESC, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,     KC_L,    KC_SCLN, KC_QUOT,  \
-            KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM,  KC_DOT,  KC_SLSH, SHFTENT,  \
-            KC_LCTL, _______, KC_LGUI, KC_LALT, TD(LYR), KC_SPC,  KC_BSPC, RAISE,   KC_LALT,  KC_RGUI, _______, _______),
+            KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,     KC_5,   KC_6,    KC_7,       KC_8,    KC_9,    KC_0,    KC_NO,    \
+            KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,     KC_T,   KC_Y,    KC_U,       KC_I,    KC_O,    KC_P,    KC_DEL,   \
+            CTRLESC, KC_A,    KC_S,    KC_D,    KC_F,     KC_G,   KC_H,    KC_J,       KC_K,    KC_L,    KC_SCLN, KC_QUOT,  \
+            KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,     KC_B,   KC_N,    KC_M,       KC_COMM, KC_DOT,  KC_SLSH, SHFTENT,  \
+            KC_LCTL, _______, KC_LGUI, KC_LALT, TD(LLYR), KC_SPC, KC_BSPC, TT(_RAISE), KC_LALT, KC_RGUI, _______, _______),
 
       [_LOWER] = LAYOUT_ortho_5x12(\
-            KC_F11,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,    KC_F9,   KC_F10,  KC_F12,   \
-            KC_GRV,  KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,  KC_RPRN,  KC_ASTR, KC_PLUS, KC_BSPC,  \
-            KC_DEL,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LBRC, KC_RBRC, KC_MINS, KC_EQL,   KC_NUHS, KC_NUBS, KC_QUOT,  \
-            _______, _______, _______, _______, _______, KC_LCBR, KC_RCBR, KC_LT,   KC_LT,    KC_GT,   _______, _______,  \
-            _______, _______, _______, _______, LOWER,   _______, KC_ENT,  RAISE,   KC_MNXT,  KC_VOLD, KC_VOLU, KC_MPLY),
+            KC_F11,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F12,   \
+            KC_GRV,  KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,  KC_RPRN, KC_NO,   KC_PLUS, KC_BSPC,  \
+            KC_DEL,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LBRC, KC_RBRC, KC_MINS, KC_EQL,  KC_NUHS, KC_NUBS, KC_QUOT,  \
+            _______, _______, _______, _______, _______, KC_LCBR, KC_RCBR, KC_LT,   KC_LT,   KC_GT,   _______, _______,  \
+            _______, _______, _______, _______, LOWER,   _______, KC_ENT,  RAISE,   KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY),
 
       [_RAISE] = LAYOUT_ortho_5x12(\
-            KC_GRV,  _______, KC_7,    KC_8,    KC_9,    _______, _______, _______, _______,  _______, _______, _______,  \
-            _______, _______, KC_7,    KC_8,    KC_9,    _______, KC_UP,   _______, _______,  _______, _______, KC_BSPC,  \
-            KC_DEL,  _______, KC_4,    KC_5,    KC_6,    _______, KC_LEFT, KC_DOWN, KC_UP,    KC_RGHT, KC_QUOT, KC_BSLS,  \
-            _______, _______, KC_1,    KC_2,    KC_3,    _______, _______, _______, _______,  _______, _______, _______,  \
-            _______, _______, KC_0,    _______, LOWER,   KC_TAB,  _______, RAISE,   _______,  KC_VOLD, KC_VOLU, KC_MPLY),
+            KC_GRV,  _______, KC_7, KC_8,    KC_9,  _______, _______, _______, _______, _______, _______, _______,  \
+            _______, _______, KC_7, KC_8,    KC_9,  _______, KC_UP,   _______, _______, _______, _______, KC_BSPC,  \
+            KC_DEL,  _______, KC_4, KC_5,    KC_6,  _______, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_QUOT, KC_BSLS,  \
+            _______, _______, KC_1, KC_2,    KC_3,  _______, _______, _______, _______, _______, _______, _______,  \
+            _______, _______, KC_0, _______, LOWER, _______, _______, RAISE,   _______, KC_VOLD, KC_VOLU, KC_MPLY),
 
       [_ADJUST] = LAYOUT_ortho_5x12(\
-            KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,    KC_F10,  KC_F11,  KC_F12,
-            _______, RESET,   DEBUG,   _______, _______, _______, _______, TERM_ON, TERM_OFF, _______, _______, KC_DEL,
-            _______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, _______, _______,  _______, _______, _______,
-            _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______,  _______, _______, _______,
+            KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,    KC_F10,  KC_F11,  KC_F12,   \
+            _______, RESET,   DEBUG,   _______, _______, _______, _______, TERM_ON, TERM_OFF, _______, _______, KC_DEL,   \
+            _______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, _______, _______,  _______, _______, _______,  \
+            _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______,  _______, _______, _______,  \
             _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______),
 
       [_FUNCTIONS] = LAYOUT_ortho_5x12(\
@@ -96,8 +102,8 @@ static tap ql_tap_state = {
 };
 
 // `finished` and `reset` functions for each tapdance keycode
-/* void ql_finished(qk_tap_dance_state_t *state, void *user_data); */
-/* void ql_reset(qk_tap_dance_state_t *state, void *user_data); */
+void lower_finished(qk_tap_dance_state_t *state, void *user_data);
+void lower_reset(qk_tap_dance_state_t *state, void *user_data);
 
 // check tap dance state of LOWER key,
 uint8_t cur_dance(qk_tap_dance_state_t *state) {
@@ -115,7 +121,7 @@ uint8_t cur_dance(qk_tap_dance_state_t *state) {
 
 /* function controlling LOWER key, on single hold activate _LOWER
  * on double hold activate layer _FUNCTIONS */
-void ql_finished(qk_tap_dance_state_t *state, void *user_data) {
+void lower_finished(qk_tap_dance_state_t *state, void *user_data) {
     ql_tap_state.state = cur_dance(state);
     switch (ql_tap_state.state) {
         case SINGLE_HOLD:
@@ -129,7 +135,7 @@ void ql_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 // cleanup function when tapdance is finished
-void ql_reset(qk_tap_dance_state_t *state, void *user_data) {
+void lower_reset(qk_tap_dance_state_t *state, void *user_data) {
     switch (ql_tap_state.state) {
         case SINGLE_HOLD: layer_off(_LOWER); break;
         case DOUBLE_HOLD: layer_off(_FUNCTIONS); break;
@@ -137,8 +143,9 @@ void ql_reset(qk_tap_dance_state_t *state, void *user_data) {
     ql_tap_state.state = 0;
 }
 
+// name associated with each tapdance
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [LYR] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, ql_finished, ql_reset, 200)
+    [LLYR] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, lower_finished, lower_reset, 200),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
