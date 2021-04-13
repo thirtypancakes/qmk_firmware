@@ -47,11 +47,39 @@ enum tap_keycodes {
     DOUBLE_HOLD
 };
 
+enum combo_keys {
+    RPRN,
+    RBRC,
+    RBCR,
+    LPRN,
+    LBRC,
+    LBCR
+};
+
+
 // define tap_state
 typedef struct tap_state {
     bool is_press_action;
     uint8_t state;
 } tap;
+
+// combo keys
+const uint16_t PROGMEM er_combo[] = {KC_E, KC_R, COMBO_END};
+const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM cv_combo[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM ui_combo[] = {KC_U, KC_I, COMBO_END};
+const uint16_t PROGMEM jk_combo[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM mcom_combo[] = {KC_M, KC_COMM, COMBO_END};
+
+combo_t key_combos[COMBO_COUNT] = {
+    [RPRN] = COMBO(er_combo, KC_LPRN),
+    [RBRC] = COMBO(df_combo, KC_LBRC),
+    [RBCR] = COMBO(cv_combo, KC_LBRC),
+    [LPRN] = COMBO(ui_combo, KC_RPRN),
+    [LBRC] = COMBO(jk_combo, KC_RBRC),
+    [LBCR] = COMBO(mcom_combo, KC_RBRC)
+};
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { \
     [_QWERTY] = LAYOUT_ortho_5x12(\
